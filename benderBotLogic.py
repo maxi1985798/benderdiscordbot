@@ -5,45 +5,14 @@ class Card:
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
-    
-    # def cmp(self, other):
-    #     # Check the suits
-    #     if self.suit > other.suit: return 1
-    #     if self.suit < other.suit: return -1
-    #     # Suits are the same... check ranks
-    #     if self.rank > other.rank: return 1
-    #     if self.rank < other.rank: return -1
-    #     # Ranks are the same... it's a tie
-    #     return 0
-    
-    # def __str__(self):
-    #     return (self.ranks[self.rank] + " of " + self.suits[self.suit])
-
-    # def __eq__(self, other):
-    #     return self.cmp(other) == 0
-
-    # def __le__(self, other):
-    #     return self.cmp(other) <= 0
-
-    # def __ge__(self, other):
-    #     return self.cmp(other) >= 0
-
-    # def __gt__(self, other):
-    #     return self.cmp(other) > 0
-
-    # def __lt__(self, other):
-    #     return self.cmp(other) < 0
-
-    # def __ne__(self, other):
-    #     return self.cmp(other) != 0
-
 
 class Deck:
-    def __init__(self):
+    def __init__(self,aRandomGenerator):
         self.cards = []
         for suit in range(4):
             for rank in range(1, 14):
                 self.cards.append(Card(suits[suit],ranks[rank]))
+        self.__randomGenerator = aRandomGenerator
     def print_deck(self):
         for card in self.cards:
             print(card)
@@ -57,62 +26,103 @@ class Deck:
     def is_empty(self):
         return self.cards == []
     def shuffle(self):
-        import random
-        rng = random.Random()        # Create a random generator
-        rng.shuffle(self.cards)      # uUse its shuffle method
+        self.__randomGenerator.shuffle(self.cards)      # uUse its shuffle method
 
 class BlackJackHand:
-    def __init__(self,deckToTakeCards):
+    def __init__(self,initialCardOne,initialCardTwo):
         self.cards = []  # start with an empty list as we did in the Deck class
-        self.value = 0   # start with zero value
+        self.__value = 0   # start with zero value
         self.aces = 0    # add an attribute to keep track of aces
-        self.values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
-        self.deck = deckToTakeCards
-        self.addCard()
-        self.addCard()
-        # initialCardOne = deckToTakeCards.deal()
-        # initialCardTwo = deckToTakeCards.deal()
-        # self.deck = deckToTakeCards
-        # self.cards.append(initialCardOne)
-        # if initialCardOne.rank == 'Ace':
-        #     self.aces += 1
-        # self.cards.append(initialCardTwo)
-        # if initialCardTwo.rank == 'Ace':
-        #     self.aces += 1
+        self.values = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
+        self.addCard(initialCardOne)
+        self.addCard(initialCardTwo)
         
     def getCards(self):
         return self.cards
-    def addCard(self):
-        card = self.deck.deal()
+
+    def addCard(self,card):
         self.cards.append(card)
-        self.value += self.values[card.rank]
+        self.__value += self.values[card.rank]
         if card.rank == 'Ace':
             self.aces += 1
+        self.adjust_for_ace()
     
     def adjust_for_ace(self):
-        while self.value > 21 and self.aces:
-            self.value -= 10
+        while self.__value > 21 and self.aces:
+            self.__value -= 10
             self.aces -= 1
+    def value(self):
+        return self.__value
 
+class BlackJackDealerHand:
+    def __init__(self,initialDealerCard):
+        self.cards = []  # start with an empty list as we did in the Deck class
+        self.__value = 0   # start with zero value
+        self.aces = 0    # add an attribute to keep track of aces
+        self.values = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
+        self.cards.append(initialDealerCard)
+        self.__value += self.values[initialDealerCard.rank]
+        if initialDealerCard.rank == 'Ace':
+            self.aces += 1
 
-
-class Chips:
-    
-    def __init__(self,initialChips):
-        self.total = initialChips  # This can be set to a default value or supplied by a user input
-        self.bet = 0
+    def getCards(self):
+        return self.cards
         
-    def win_bet(self):
-        self.total += self.bet
+    def addCard(self,card):
+        self.cards.append(card)
+        self.__value += self.values[card.rank]
+        if card.rank == 'Ace':
+            self.aces += 1
+        self.adjust_for_ace()
     
-    def lose_bet(self):
-        self.total -+ self.bet
+    def adjust_for_ace(self):
+        while self.__value > 21 and self.aces:
+            self.__value -= 10
+            self.aces -= 1
+    def value(self):
+        return self.__value
+
+
+class Dealer:
+    def __init__(self,deck,dealerHand):
+        self.__deck = deck
+        self.__dealerHand = dealerHand
+    def deal(self):
+        return self.__deck.deal()
 
 class Player:
-    def __init__(self,playerChips,playerHand):
-        self.__chips = playerChips
-        self.__hand = playerHand
+    def __init__(self,name,playerHand,aDealer):
+        self.__playerName = name
+    def name(self):
+        return self.__playerName
+class BlackJackGame:
+    def __init__(self,deck,dealer,players):
+        self.__deck = deck
+        self.__dealer = dealer
+        self.__players = players
+        # for p in players:
+        #     self.__playersAndHands[p] = BlackJackHand(self.__deck.deal(),self.__deck.deal())
+        self.__currentPlayer = players[0]
+    def currentPlayerStand(self):
+        self.__dealer.playerStand()
+    def isPlaying(self,aPlayer):
+        return self.__currentPlayer == aPlayer
+
+
+
+# class Chips:
     
+#     def __init__(self,initialChips):
+#         self.total = initialChips  # This can be set to a default value or supplied by a user input
+#         self.bet = 0
+        
+#     def win_bet(self):
+#         self.total += self.bet
+    
+#     def lose_bet(self):
+#         self.total -+ self.bet
+
+
 
 
 class BenderBot:
@@ -129,7 +139,7 @@ class BenderBot:
             'https://i.imgur.com/bli8Q5c.jpg',
             'https://tenor.com/view/pretty-woman-julia-roberts-richard-gere-gif-5736316'
             ]
-        self.deck = Deck()
+        # self.deck = Deck()
 
-d = Deck()
-print(d)
+# d = Deck()
+# print(d)
