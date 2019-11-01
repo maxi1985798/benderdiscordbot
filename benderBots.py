@@ -15,7 +15,10 @@ hookers = ['https://i.imgur.com/VSP8EBp.jpg',
     'https://i.imgur.com/lR6MiJK.jpg',
     'https://i.imgur.com/oulOY.jpg',
     'https://i.imgur.com/bli8Q5c.jpg',
-    'https://tenor.com/view/pretty-woman-julia-roberts-richard-gere-gif-5736316'
+    'https://tenor.com/view/pretty-woman-julia-roberts-richard-gere-gif-5736316',
+    'https://pbs.twimg.com/media/Cb1GR80WwAAw0dp.jpg',
+    'https://pbs.twimg.com/media/Dnd178AX4AAcRq-.jpg',
+    'https://i.pinimg.com/originals/3b/a9/58/3ba9588efca77fd966d772c0b25840e7.jpg'
     ]
 
 
