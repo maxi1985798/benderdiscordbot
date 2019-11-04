@@ -63,6 +63,8 @@ class BenderBotTest(unittest.TestCase):
         players = [player01,player02,player03]
         aBlackJackGame = BlackJackGame(aDeck,aDealer,players)
         self.assertTrue(aBlackJackGame.isPlaying(player01))
+        aBlackJackGame.currentPlayerStand()
+        self.assertTrue(aBlackJackGame.isPlaying(player02))
         # aDealer.deal()
         # # self.assertEquals(aDealer.currentPlayer(),1)
         # self.assertEquals(len(playerHand01.getCards()),3)

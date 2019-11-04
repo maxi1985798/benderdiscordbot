@@ -93,6 +93,9 @@ class Dealer:
 class Player:
     def __init__(self,name,playerHand,aDealer):
         self.__playerName = name
+        self.__playerHand = playerHand
+    def playerHand(self):
+        return self.__playerHand
     def name(self):
         return self.__playerName
 class BlackJackGame:
@@ -104,7 +107,15 @@ class BlackJackGame:
         #     self.__playersAndHands[p] = BlackJackHand(self.__deck.deal(),self.__deck.deal())
         self.__currentPlayer = players[0]
     def currentPlayerStand(self):
-        self.__dealer.playerStand()
+        # self.__dealer.playerStand()
+        for i in range(len(self.__players)):
+            if i == (len(self.__players) -1):
+                self.__currentPlayer = self.__dealer
+                break
+            elif self.__players[i] == self.__currentPlayer:
+                self.__currentPlayer = self.__players[i+1]
+                break
+        
     def isPlaying(self,aPlayer):
         return self.__currentPlayer == aPlayer
 
